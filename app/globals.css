@@ -1,26 +1,178 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:        #020c1b;
+  --panel:     #040f22;
+  --border:    #0b2238;
+  --border-hi: rgba(0,180,220,0.35);
+  --accent:    #00b4d8;
+  --hi:        #70e8ff;
+  --green:     #00e07a;
+  --amber:     #f4a522;
+  --purple:    #9b59ff;
+  --red:       #ff3b5c;
+  --dim:       #0c2035;
+  --muted:     #1b4060;
+  --txt:       #8ab8d0;
+  --txt-dim:   #2a5070;
+  --txt-label: #163248;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--bg);
+  --color-foreground: var(--txt);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--font-geist-mono), "SF Mono", "Fira Code", monospace;
+  background-image: radial-gradient(rgba(0,140,190,0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
+
+/* Scanlines */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.055) 3px, rgba(0,0,0,0.055) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Panel ────────────────────────────────────────────────────────────────── */
+.p {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* clipped top-left + bottom-right corners */
+  clip-path: polygon(
+    8px 0, 100% 0, 100% calc(100% - 8px),
+    calc(100% - 8px) 100%, 0 100%, 0 8px
+  );
+}
+/* corner accents */
+.p::before {
+  content: "";
+  position: absolute; top: -1px; right: -1px;
+  width: 14px; height: 14px;
+  border-top: 1px solid var(--accent);
+  border-right: 1px solid var(--accent);
+  pointer-events: none; z-index: 1;
+}
+.p::after {
+  content: "";
+  position: absolute; bottom: 0; left: 0;
+  width: 2px; height: 30%;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  pointer-events: none;
+}
+
+/* ── Panel header ─────────────────────────────────────────────────────────── */
+.ph {
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--txt-dim);
+  padding: 5px 9px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.ph-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 5px var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Panel body ───────────────────────────────────────────────────────────── */
+.pb { flex: 1; padding: 7px 9px; overflow: hidden; }
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+.lbl {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--txt-label);
+}
+.val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--hi);
+  text-shadow: 0 0 8px rgba(112, 232, 255, 0.4);
+}
+.val-lg {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--hi);
+  text-shadow: 0 0 10px rgba(112, 232, 255, 0.45);
+  line-height: 1;
+}
+.val-xl {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--hi);
+  text-shadow: 0 0 14px rgba(112, 232, 255, 0.5);
+  line-height: 1;
+}
+.u { font-size: 0.58rem; color: var(--txt-dim); margin-left: 3px; }
+
+/* ── Divider ──────────────────────────────────────────────────────────────── */
+.div { border-bottom: 1px solid var(--border); margin: 5px 0; }
+
+/* ── Inline progress bar ──────────────────────────────────────────────────── */
+.bar-track {
+  height: 2px;
+  background: var(--dim);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-top: 3px;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.5s ease;
+}
+
+/* ── Live indicator ───────────────────────────────────────────────────────── */
+.pulse {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+  animation: pulse-k 1.6s ease-in-out infinite;
+}
+.pulse.dead {
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+  animation: none;
+}
+@keyframes pulse-k {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,224,122,.6); }
+  50%      { box-shadow: 0 0 0 4px rgba(0,224,122,0); }
+}
+
+/* ── Blink ────────────────────────────────────────────────────────────────── */
+.blink { animation: bk 1s step-end infinite; }
+@keyframes bk { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+.sc::-webkit-scrollbar { width: 3px; }
+.sc::-webkit-scrollbar-track { background: transparent; }
+.sc::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
