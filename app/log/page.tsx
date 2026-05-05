@@ -7,13 +7,13 @@ function csvRow(p: Pkt): string {
   return [
     p.date, p.time, p.lat, p.lon, p.fix, p.sat,
     p.gpsalt, p.bmpalt, p.spd, p.crs,
-    p.temp, p.humidity, p.pressure,
+    p.temp, p.humidity, p.pressure, p.mq,
     p.ax, p.ay, p.az,
     p.rssi ?? "", p.snr ?? "",
   ].join(",");
 }
 
-const CSV_HEADER = "date,time,lat,lon,fix,sat,gpsalt,bmpalt,spd,crs,temp,humidity,pressure,ax,ay,az,rssi,snr";
+const CSV_HEADER = "date,time,lat,lon,fix,sat,gpsalt,bmpalt,spd,crs,temp,humidity,pressure,mq,ax,ay,az,rssi,snr";
 
 function downloadCSV(data: Pkt[], filename: string) {
   const content = [CSV_HEADER, ...data.map(csvRow)].join("\n");
@@ -133,12 +133,12 @@ export default function LogPage() {
           {/* Table header */}
           <div style={{
             display:"grid",
-            gridTemplateColumns:"60px 60px 80px 80px 44px 44px 60px 60px 60px 60px 60px",
+            gridTemplateColumns:"52px 56px 72px 72px 40px 38px 38px 44px 44px 44px 40px 36px",
             padding:"3px 8px",
             borderBottom:"1px solid var(--border)",
             background:"rgba(0,0,0,.3)",
           }}>
-            {["TIME","DATE","LAT","LON","ALT","TEMP","HUMID","PRESS","RSSI","SPD","FIX"].map(h=>(
+            {["TIME","DATE","LAT","LON","ALT","TEMP","HUM","BAR","CO₂","RSSI","SPD","FIX"].map(h=>(
               <span key={h} style={{ fontSize:"0.48rem", letterSpacing:"0.1em", color:"var(--txt-label)" }}>{h}</span>
             ))}
           </div>
@@ -155,7 +155,7 @@ export default function LogPage() {
                   key={i}
                   style={{
                     display:"grid",
-                    gridTemplateColumns:"60px 60px 80px 80px 44px 44px 60px 60px 60px 60px 44px",
+                    gridTemplateColumns:"52px 56px 72px 72px 40px 38px 38px 44px 44px 44px 40px 36px",
                     padding:"2px 8px",
                     borderBottom:"1px solid rgba(11,34,56,.3)",
                     background: i===0 ? "rgba(0,180,220,0.04)" : "transparent",
@@ -170,6 +170,7 @@ export default function LogPage() {
                     p.temp.toFixed(1),
                     p.humidity.toFixed(1),
                     p.pressure.toFixed(1),
+                    p.mq.toFixed(0),
                     String(p.rssi ?? "--"),
                     p.spd.toFixed(1),
                     p.fix ? "✓" : "✗",
@@ -177,7 +178,7 @@ export default function LogPage() {
                     <span key={j} style={{
                       fontSize:"0.56rem",
                       fontFamily:"monospace",
-                      color: j===10 ? (p.fix?"var(--green)":"var(--red)") : i===0 ? "var(--hi)" : "var(--txt-dim)",
+                      color: j===11 ? (p.fix?"var(--green)":"var(--red)") : i===0 ? "var(--hi)" : "var(--txt-dim)",
                       overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
                     }}>
                       {v}

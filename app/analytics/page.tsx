@@ -118,6 +118,7 @@ export default function AnalyticsPage() {
   const pressArr = history.map(p=>p.pressure);
   const altArr   = history.map(p=>p.bmpalt);
   const humArr   = history.map(p=>p.humidity);
+  const mqArr    = history.map(p=>p.mq);
 
   return (
     <div style={{ height:"100%", display:"flex", flexDirection:"column", overflow:"hidden" }}>
@@ -200,6 +201,26 @@ export default function AnalyticsPage() {
             <div className="ph"><span className="ph-dot" style={{ background:"var(--amber)" }} />TEMPERATURE OVER TIME</div>
             <div className="pb">
               <TimeSeries data={history} yKey="temp" yLabel="°C" color="var(--amber)" />
+            </div>
+          </div>
+
+          {/* CO₂ (MQ) vs altitude */}
+          <div className="p">
+            <div className="ph"><span className="ph-dot" style={{ background:"#6ecfbd" }} />CO₂ (MQ) vs ALTITUDE</div>
+            <div className="pb">
+              <Scatter data={history} xKey="mq" yKey="bmpalt" xLabel="CO₂ (ppm)" yLabel="Alt (m)" color="#6ecfbd" />
+              <div style={{ display:"flex", justifyContent:"space-between", marginTop:4 }}>
+                <span className="lbl">STD DEV CO₂: <span style={{ color:"#6ecfbd" }}>{stdDev(mqArr).toFixed(1)} ppm</span></span>
+                <span className="lbl">CURRENT: <span style={{ color:"#6ecfbd" }}>{pkt?pkt.mq.toFixed(0)+" ppm":"--"}</span></span>
+              </div>
+            </div>
+          </div>
+
+          {/* CO₂ over time */}
+          <div className="p">
+            <div className="ph"><span className="ph-dot" style={{ background:"#6ecfbd" }} />CO₂ (MQ) OVER TIME</div>
+            <div className="pb">
+              <TimeSeries data={history} yKey="mq" yLabel="ppm" color="#6ecfbd" />
             </div>
           </div>
 

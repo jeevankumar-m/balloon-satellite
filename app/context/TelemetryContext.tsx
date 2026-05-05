@@ -11,6 +11,8 @@ export interface Pkt {
   gpsalt: number; bmpalt: number; spd: number; crs: number;
   date: string; time: string; temp: number; humidity: number;
   pressure: number; ax: number; ay: number; az: number;
+  /** MQ-series gas sensor (telemetry key `MQ`) — displayed as CO₂ */
+  mq: number;
   rssi: number | null; snr: number | null; raw: string;
   _ts: number;
 }
@@ -26,6 +28,7 @@ export interface TelemetryCtx {
   tmpH:  number[];
   humH:  number[];
   preH:  number[];
+  mqH:   number[];
   rsiH:  number[];
   log:   string[];
 }
@@ -33,7 +36,7 @@ export interface TelemetryCtx {
 const DEFAULTS: TelemetryCtx = {
   pkt: null, connected: false, pkts: 0,
   history: [], gpsTrack: [],
-  altH: [], tmpH: [], humH: [], preH: [], rsiH: [],
+  altH: [], tmpH: [], humH: [], preH: [], mqH: [], rsiH: [],
   log: [],
 };
 
@@ -75,6 +78,7 @@ export function TelemetryProvider({ children }: { children: ReactNode }) {
       tmpH: rp(s.tmpH, p.temp,     SPARK),
       humH: rp(s.humH, p.humidity, SPARK),
       preH: rp(s.preH, p.pressure, SPARK),
+      mqH:  rp(s.mqH,  p.mq,       SPARK),
       rsiH: p.rssi != null ? rp(s.rsiH, p.rssi, SPARK) : s.rsiH,
       log:  rp(
         s.log,
@@ -140,6 +144,7 @@ export function TelemetryProvider({ children }: { children: ReactNode }) {
         ax,
         ay,
         az,
+        mq: 420 + Math.sin(i * 0.13) * 95 + (j % 7) * 2,
         rssi: seq.rssi[j],
         snr: 8 + (Math.sin(i * 0.18) * 3),
         raw: "DEMO",

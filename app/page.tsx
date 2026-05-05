@@ -138,7 +138,7 @@ function useElapsed(on: boolean) {
 
 // ══════════════════════════════════════════════════════════════════════════════
 export default function Dashboard() {
-  const { pkt, connected, pkts, altH, tmpH, humH, preH, rsiH, log } = useTelemetry();
+  const { pkt, connected, pkts, altH, tmpH, humH, preH, mqH, rsiH, log } = useTelemetry();
   const logRef  = useRef<HTMLDivElement>(null);
   const elapsed = useElapsed(connected);
 
@@ -210,11 +210,12 @@ export default function Dashboard() {
         {/* CENTER */}
         <div style={{ display:"flex", flexDirection:"column", gap:5, gridRow:"1", minHeight:0 }}>
           {/* Top widgets */}
-          <div style={{ display:"flex", gap:5, height:100, flexShrink:0 }}>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:5, minHeight:100, flexShrink:0 }}>
             <Widget title="ALTITUDE"    value={pkt?.bmpalt??null}    unit="m"    history={altH} color="var(--accent)" />
             <Widget title="TEMPERATURE" value={pkt?.temp??null}      unit="°C"   history={tmpH} color="var(--amber)"  />
             <Widget title="HUMIDITY"    value={pkt?.humidity??null}  unit="%"    history={humH} color="var(--green)"  />
             <Widget title="PRESSURE"    value={pkt?.pressure??null}  unit="hPa"  history={preH} color="var(--purple)" />
+            <Widget title="CO₂ (MQ)"    value={pkt?.mq??null}        unit="ppm"  history={mqH}  color="#6ecfbd"       />
           </div>
           {/* Cube */}
           <div className="p" style={{ flex:1, position:"relative", minHeight:0 }}>
@@ -269,6 +270,7 @@ export default function Dashboard() {
               {l:"TEMPERATURE",v:pkt?.temp??null,    u:"°C",  mn:-20,mx:60,   c:"var(--amber)"},
               {l:"HUMIDITY",   v:pkt?.humidity??null, u:"% RH",mn:0,  mx:100, c:"var(--green)"},
               {l:"PRESSURE",   v:pkt?.pressure??null, u:"hPa", mn:900,mx:1100,c:"var(--purple)"},
+              {l:"CO₂ (MQ)",   v:pkt?.mq??null,       u:"ppm", mn:0,  mx:5000,c:"#6ecfbd"},
             ] as const).map(({l,v,u,mn,mx,c})=>(
               <div key={l} style={{ marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:2 }}>

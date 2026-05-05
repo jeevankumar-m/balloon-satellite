@@ -31,7 +31,8 @@ RAW_RE = re.compile(
     r"GPSALT:([\-\d.]+),BMPALT:([\-\d.]+),SPD:([\-\d.]+),CRS:([\-\d.]+),"
     r"DATE:([^,]+),TIME:([^,]+),"
     r"T:([\-\d.]+),H:([\-\d.]+),P:([\-\d.]+),"
-    r"AX:([\-\d]+),AY:([\-\d]+),AZ:([\-\d]+)"
+    r"AX:([\-\d]+),AY:([\-\d]+),AZ:([\-\d]+),"
+    r"MQ:([\-\d.]+)"
 )
 RSSI_RE = re.compile(r"RSSI:\s*([\-\d.]+)")
 SNR_RE  = re.compile(r"SNR:\s*([\-\d.]+)")
@@ -62,6 +63,7 @@ def parse_packet(buf: str) -> Optional[dict]:
         "ax":       int(m.group(14)),
         "ay":       int(m.group(15)),
         "az":       int(m.group(16)),
+        "mq":       float(m.group(17)),
         "rssi":     float(rssi_m.group(1)) if rssi_m else None,
         "snr":      float(snr_m.group(1))  if snr_m  else None,
         "raw":      buf.strip(),

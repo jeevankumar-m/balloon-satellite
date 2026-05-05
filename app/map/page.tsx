@@ -71,6 +71,7 @@ function LeafletMap() {
     marker.bindPopup(`
       <b style="font-family:monospace">ALT: ${latest.bmpalt.toFixed(1)} m</b><br/>
       T: ${latest.temp.toFixed(1)}°C &nbsp; H: ${latest.humidity.toFixed(1)}%<br/>
+      CO₂ (MQ): ${latest.mq.toFixed(0)} ppm<br/>
       RSSI: ${latest.rssi ?? "--"} dBm
     `);
 
